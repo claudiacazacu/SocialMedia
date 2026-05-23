@@ -9,7 +9,6 @@ namespace instagram.Models
         public string Hashtag {get; set;} = null!;
         public DateTime DataPublicarii {get; set;}
         public string ImageUrl {get; set;} = null!;
-        public string Imagine{get;set;} = null!;
         public int NrLikeuri {get; set;}
         public int NrComentarii {get; set;}
         public int NrDistribuiri {get; set;}

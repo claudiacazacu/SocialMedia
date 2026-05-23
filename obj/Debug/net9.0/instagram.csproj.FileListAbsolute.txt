@@ -129,3 +129,5 @@ C:\Users\claud\OneDrive\Desktop\facultate\an3sem2\ASP\proiect\instagram\bin\Debu
 C:\Users\claud\OneDrive\Desktop\facultate\an3sem2\ASP\proiect\instagram\bin\Debug\net9.0\tr\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 C:\Users\claud\OneDrive\Desktop\facultate\an3sem2\ASP\proiect\instagram\bin\Debug\net9.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 C:\Users\claud\OneDrive\Desktop\facultate\an3sem2\ASP\proiect\instagram\bin\Debug\net9.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+C:\Users\claud\OneDrive\Desktop\facultate\an3sem2\ASP\proiect\instagram\bin\Debug\net9.0\instagram.staticwebassets.runtime.json
+C:\Users\claud\OneDrive\Desktop\facultate\an3sem2\ASP\proiect\instagram\obj\Debug\net9.0\instagram.sourcelink.json

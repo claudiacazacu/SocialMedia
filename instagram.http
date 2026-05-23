@@ -5,7 +5,7 @@ Content-Type: application/json
 
 {
   "Descriere": "Prima mea postare din VS Code!",
-  "Imagine": "/images/poza1.jpg",
+  "ImageUrl": "/images/image1.jpg",
   "Hashtag": "#programare"
 }
 ###

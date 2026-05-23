@@ -15,5 +15,7 @@ namespace instagram.Models
         public string DataNasterii {get; set;} = null!;
         public ICollection<Post> Posts { get; set; } = new List<Post>();
         public ICollection<Comment> Comments { get; set; } = new List<Comment>();
+        public int RoleId {get; set;}
+        public Role Role {get; set;} = null!;
     }
 }

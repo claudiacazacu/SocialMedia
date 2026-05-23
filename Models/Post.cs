@@ -12,5 +12,8 @@ namespace instagram.Models
         public int NrLikeuri {get; set;}
         public int NrComentarii {get; set;}
         public int NrDistribuiri {get; set;}
+        // O postare poate avea o listă de comentarii
+        public ICollection<Comment> Comments { get; set; } = new List<Comment>();
+        public User User { get; set; } = null!;
     }
 }

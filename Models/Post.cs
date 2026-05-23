@@ -6,13 +6,12 @@ namespace instagram.Models
         public int Id {get; set;} 
         public int UserId {get; set;} //FK-ul
         public string Descriere {get; set;} = null!;
-        public string Hashtag {get; set;} = null!;
+        public ICollection<Tag> Tags {get; set;} = new List<Tag>();
         public DateTime DataPublicarii {get; set;}
         public string ImageUrl {get; set;} = null!;
         public int NrLikeuri {get; set;}
         public int NrComentarii {get; set;}
         public int NrDistribuiri {get; set;}
-        // O postare poate avea o listă de comentarii
         public ICollection<Comment> Comments { get; set; } = new List<Comment>();
         public User User { get; set; } = null!;
     }

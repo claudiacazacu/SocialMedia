@@ -1,0 +1,12 @@
+@HostAddress = http://localhost:5233
+###
+POST {{HostAddress}}/api/posts
+Content-Type: application/json
+
+{
+  "Descriere": "Prima mea postare din VS Code!",
+  "Imagine": "/images/poza1.jpg",
+  "Hashtag": "#programare"
+}
+###
+GET {{HostAddress}}/api/posts

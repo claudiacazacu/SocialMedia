@@ -19,14 +19,11 @@ namespace instagram.Controllers
         public async Task<IActionResult> GetUsers()
         {
             var users = await _context.Users
-                .Select(u => new UserReadDto
-                {
-                    Id = u.Id,
-                    Username = u.UserName,
-                    Email = u.Email
-                })
-                .ToListAsync();
-
+                .Select(u => new UserReadDto(
+                    u.Id, 
+                    u.UserName!, 
+                    u.Email!
+                )).ToListAsync();
             return Ok(users);
         }
 
@@ -43,11 +40,11 @@ namespace instagram.Controllers
             _context.Users.Add(newUser);
             await _context.SaveChangesAsync();
             var returnDto = new UserReadDto
-            {
-                Id = newUser.Id,
-                Username = newUser.UserName,
-                Email = newUser.Email
-            };
+            (
+                newUser.Id,
+                newUser.UserName!, 
+                newUser.Email!
+            );
             return Ok(returnDto);
         }
     }

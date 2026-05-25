@@ -131,3 +131,12 @@ C:\Users\claud\OneDrive\Desktop\facultate\an3sem2\ASP\proiect\instagram\bin\Debu
 C:\Users\claud\OneDrive\Desktop\facultate\an3sem2\ASP\proiect\instagram\bin\Debug\net9.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 C:\Users\claud\OneDrive\Desktop\facultate\an3sem2\ASP\proiect\instagram\bin\Debug\net9.0\instagram.staticwebassets.runtime.json
 C:\Users\claud\OneDrive\Desktop\facultate\an3sem2\ASP\proiect\instagram\obj\Debug\net9.0\instagram.sourcelink.json
+C:\Users\claud\OneDrive\Desktop\facultate\an3sem2\ASP\proiect\instagram\bin\Debug\net9.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\claud\OneDrive\Desktop\facultate\an3sem2\ASP\proiect\instagram\bin\Debug\net9.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+C:\Users\claud\OneDrive\Desktop\facultate\an3sem2\ASP\proiect\instagram\bin\Debug\net9.0\Microsoft.IdentityModel.Abstractions.dll
+C:\Users\claud\OneDrive\Desktop\facultate\an3sem2\ASP\proiect\instagram\bin\Debug\net9.0\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Users\claud\OneDrive\Desktop\facultate\an3sem2\ASP\proiect\instagram\bin\Debug\net9.0\Microsoft.IdentityModel.Logging.dll
+C:\Users\claud\OneDrive\Desktop\facultate\an3sem2\ASP\proiect\instagram\bin\Debug\net9.0\Microsoft.IdentityModel.Protocols.dll
+C:\Users\claud\OneDrive\Desktop\facultate\an3sem2\ASP\proiect\instagram\bin\Debug\net9.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+C:\Users\claud\OneDrive\Desktop\facultate\an3sem2\ASP\proiect\instagram\bin\Debug\net9.0\Microsoft.IdentityModel.Tokens.dll
+C:\Users\claud\OneDrive\Desktop\facultate\an3sem2\ASP\proiect\instagram\bin\Debug\net9.0\System.IdentityModel.Tokens.Jwt.dll

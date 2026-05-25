@@ -22,28 +22,30 @@ namespace instagram.Controllers
                 .Select(u => new UserReadDto
                 {
                     Id = u.Id,
-                    Username = u.Username,
+                    Username = u.UserName,
                     Email = u.Email
                 })
                 .ToListAsync();
 
             return Ok(users);
         }
+
         [HttpPost]
         public async Task<IActionResult> CreateUser([FromBody] UserCreateDto userDto)
         {
-            var newUser = new User
+            var newUser = new ApplicationUser 
             {
-                Username = userDto.Username,
+                UserName = userDto.Username,
                 Email = userDto.Email,
-                RoleId = 1 
+                Nume = "NuAmNicioIdee",
+                Prenume = "CredCaMergeOriceAici" 
             };
             _context.Users.Add(newUser);
             await _context.SaveChangesAsync();
             var returnDto = new UserReadDto
             {
                 Id = newUser.Id,
-                Username = newUser.Username,
+                Username = newUser.UserName,
                 Email = newUser.Email
             };
             return Ok(returnDto);

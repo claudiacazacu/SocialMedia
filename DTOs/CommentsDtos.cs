@@ -4,6 +4,9 @@ public record CreateCommentDto(
     [Required] string Content, 
     [Required] int PostId
 );
+public record UpdateCommentDto(
+    [Required] string Content
+);
 public record CommentReadDto(
     int Id, 
     string Content, 

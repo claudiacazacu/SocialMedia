@@ -19,6 +19,13 @@ public class UserService : IUserService
         return users.Select(u => new UserReadDto(u.Id, u.UserName ?? string.Empty, u.Email ?? string.Empty));
     }
 
+    public async Task<UserReadDto?> GetUserByIdAsync(string id)
+    {
+        var user = await _repository.GetByIdAsync(id);
+        if (user == null) return null;
+        return new UserReadDto(user.Id, user.UserName ?? string.Empty, user.Email ?? string.Empty);
+    }
+
     public async Task<UserReadDto> CreateUserAsync(UserCreateDto dto)
     {
         var user = new ApplicationUser
@@ -32,6 +39,20 @@ public class UserService : IUserService
         await _repository.AddAsync(user);
         await _repository.SaveChangesAsync();
 
+        return new UserReadDto(user.Id, user.UserName ?? string.Empty, user.Email ?? string.Empty);
+    }
+
+    public async Task<UserReadDto?> UpdateUserAsync(string id, UpdateUserDto dto)
+    {
+        var user = await _repository.GetByIdAsync(id);
+        if (user == null) return null;
+
+        user.UserName = dto.Username;
+        user.Email = dto.Email;
+        user.Nume = dto.Nume;
+        user.Prenume = dto.Prenume;
+
+        await _repository.SaveChangesAsync();
         return new UserReadDto(user.Id, user.UserName ?? string.Empty, user.Email ?? string.Empty);
     }
 

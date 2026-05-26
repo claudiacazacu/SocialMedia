@@ -26,6 +26,16 @@ public class PostsController : ControllerBase
         return Ok(posts);
     }
 
+    [HttpGet("{id:int}")]
+    [ProducesResponseType(typeof(PostReadDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetPost(int id)
+    {
+        var post = await _service.GetPostByIdAsync(id);
+        if (post == null) return NotFound();
+        return Ok(post);
+    }
+
     [HttpPost]
     [ProducesResponseType(typeof(PostReadDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -37,7 +47,29 @@ public class PostsController : ControllerBase
         var createdPost = await _service.CreatePostAsync(createPostDto, userId);
         if (createdPost == null) return BadRequest();
 
-        return CreatedAtAction(nameof(GetAllPosts), new { id = createdPost.Id }, createdPost);
+        return CreatedAtAction(nameof(GetPost), new { id = createdPost.Id }, createdPost);
+    }
+
+    [HttpPut("{id:int}")]
+    [ProducesResponseType(typeof(PostReadDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UpdatePost(int id, [FromBody] UpdatePostDto updatePostDto)
+    {
+        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (currentUserId == null) return Unauthorized();
+
+        try
+        {
+            var updatedPost = await _service.UpdatePostAsync(id, updatePostDto, currentUserId, User.IsInRole("Admin"));
+            if (updatedPost == null) return NotFound();
+            return Ok(updatedPost);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
+        }
     }
 
     [HttpDelete("{id:int}")]

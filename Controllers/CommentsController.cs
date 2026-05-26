@@ -26,6 +26,16 @@ public class CommentsController : ControllerBase
         return Ok(comments);
     }
 
+    [HttpGet("{id:int}")]
+    [ProducesResponseType(typeof(CommentReadDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetComment(int id)
+    {
+        var comment = await _service.GetCommentByIdAsync(id);
+        if (comment == null) return NotFound();
+        return Ok(comment);
+    }
+
     [HttpPost]
     [ProducesResponseType(typeof(CommentReadDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -39,6 +49,27 @@ public class CommentsController : ControllerBase
         if (createdComment == null) return NotFound();
 
         return CreatedAtAction(nameof(GetCommentsForPost), new { postId = createCommentDto.PostId }, createdComment);
+    }
+
+    [HttpPut("{id:int}")]
+    [ProducesResponseType(typeof(CommentReadDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UpdateComment(int id, [FromBody] UpdateCommentDto updateCommentDto)
+    {
+        var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (currentUserId == null) return Unauthorized();
+
+        try
+        {
+            var updatedComment = await _service.UpdateCommentAsync(id, updateCommentDto, currentUserId);
+            if (updatedComment == null) return NotFound();
+            return Ok(updatedComment);
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
+        }
     }
 
     [HttpDelete("{id:int}")]

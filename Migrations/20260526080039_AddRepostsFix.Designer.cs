@@ -12,8 +12,8 @@ using instagram.Data;
 namespace instagram.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260525131143_InitialIdentitySetup")]
-    partial class InitialIdentitySetup
+    [Migration("20260526080039_AddRepostsFix")]
+    partial class AddRepostsFix
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -278,6 +278,34 @@ namespace instagram.Migrations
                     b.ToTable("Comments");
                 });
 
+            modelBuilder.Entity("instagram.Models.Follow", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("FollowerId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("FollowingId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FollowerId");
+
+                    b.HasIndex("FollowingId");
+
+                    b.ToTable("Follows");
+                });
+
             modelBuilder.Entity("instagram.Models.Like", b =>
                 {
                     b.Property<int>("Id")
@@ -330,6 +358,33 @@ namespace instagram.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Posts");
+                });
+
+            modelBuilder.Entity("instagram.Models.Repost", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("PostId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Reposts");
                 });
 
             modelBuilder.Entity("instagram.Models.Tag", b =>
@@ -434,6 +489,25 @@ namespace instagram.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("instagram.Models.Follow", b =>
+                {
+                    b.HasOne("instagram.Models.ApplicationUser", "Follower")
+                        .WithMany()
+                        .HasForeignKey("FollowerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("instagram.Models.ApplicationUser", "Following")
+                        .WithMany()
+                        .HasForeignKey("FollowingId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Follower");
+
+                    b.Navigation("Following");
+                });
+
             modelBuilder.Entity("instagram.Models.Like", b =>
                 {
                     b.HasOne("instagram.Models.Post", "Post")
@@ -464,6 +538,25 @@ namespace instagram.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("instagram.Models.Repost", b =>
+                {
+                    b.HasOne("instagram.Models.Post", "Post")
+                        .WithMany("Reposts")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("instagram.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("instagram.Models.ApplicationUser", b =>
                 {
                     b.Navigation("Comments");
@@ -478,6 +571,8 @@ namespace instagram.Migrations
                     b.Navigation("Comments");
 
                     b.Navigation("Likes");
+
+                    b.Navigation("Reposts");
                 });
 #pragma warning restore 612, 618
         }

@@ -13,6 +13,7 @@ namespace instagram.Models
         public ICollection<Tag> Tags {get; set;} = new List<Tag>();
         public ICollection<Comment> Comments { get; set; } = new List<Comment>();
         public ICollection<Like> Likes {get; set;} = new List<Like>();
+        public ICollection<Repost> Reposts { get; set; } = new List<Repost>();
         
         //public User User {get; set;} = null!; 
     }

@@ -5,6 +5,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using instagram.Data;
 using instagram.Models;
+using instagram.Repositories;
+using instagram.Services;
 using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
@@ -59,6 +61,24 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 .AddEntityFrameworkStores<AppDbContext>()
 .AddDefaultTokenProviders();
 
+builder.Services.AddScoped<IPostRepository, PostRepository>();
+builder.Services.AddScoped<IPostService, PostService>();
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
+
+builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+builder.Services.AddScoped<ICommentService, CommentService>();
+
+builder.Services.AddScoped<ILikeRepository, LikeRepository>();
+builder.Services.AddScoped<ILikeService, LikeService>();
+
+builder.Services.AddScoped<IFollowRepository, FollowRepository>();
+builder.Services.AddScoped<IFollowService, FollowService>();
+
+builder.Services.AddScoped<IRepostRepository, RepostRepository>();
+builder.Services.AddScoped<IRepostService, RepostService>();
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -88,7 +108,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
     //app.MapOpenApi();
 }
-
+app.UseMiddleware<GlobalExceptionMiddleware>();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

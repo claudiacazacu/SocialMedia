@@ -1,67 +1,43 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
-using instagram.Data;
-using instagram.Models;
+using Microsoft.AspNetCore.Mvc;
 using instagram.DTOs;
+using instagram.Services;
 namespace instagram.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IUserService _service;
         
-        public UsersController(AppDbContext context)
+        public UsersController(IUserService service)
         {
-            _context = context;
+            _service = service;
         }
         
         [HttpGet]
         public async Task<IActionResult> GetUsers()
         {
-            var users = await _context.Users
-                .Select(u => new UserReadDto(
-                    u.Id, 
-                    u.UserName!, 
-                    u.Email!
-                )).ToListAsync();
+            var users = await _service.GetAllUsersAsync();
             return Ok(users);
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateUser([FromBody] UserCreateDto userDto)
         {
-            var newUser = new ApplicationUser 
-            {
-                UserName = userDto.Username,
-                Email = userDto.Email,
-                Nume = "NuAmNicioIdee",
-                Prenume = "CredCaMergeOriceAici" 
-            };
-            _context.Users.Add(newUser);
-            await _context.SaveChangesAsync();
-            
-            var returnDto = new UserReadDto
-            (
-                newUser.Id,
-                newUser.UserName!, 
-                newUser.Email!
-            );
-            return Ok(returnDto);
+            var createdUser = await _service.CreateUserAsync(userDto);
+            return Ok(createdUser);
         }
+
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(string id)
         {
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
+            var deleted = await _service.DeleteUserAsync(id);
+            if (!deleted)
             {
                 return NotFound(new { message = "Userul nu a fost găsit." });
             }
-
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
 
             return Ok(new { message = "User șters cu succes de către administrator." });
         }

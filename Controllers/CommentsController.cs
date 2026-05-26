@@ -1,10 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using instagram.Data;
 using instagram.DTOs;
-using instagram.Mappings;
+using instagram.Services;
 
 namespace instagram.Controllers;
 
@@ -13,24 +11,19 @@ namespace instagram.Controllers;
 [Authorize]
 public class CommentsController : ControllerBase
 {
-    private readonly AppDbContext _context;
+    private readonly ICommentService _service;
 
-    public CommentsController(AppDbContext context)
+    public CommentsController(ICommentService service)
     {
-        _context = context;
+        _service = service;
     }
 
     [HttpGet("post/{postId:int}")]
     [ProducesResponseType(typeof(List<CommentReadDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetCommentsForPost(int postId)
     {
-        var comments = await _context.Comments
-            .Include(c => c.User)
-            .Where(c => c.PostId == postId)
-            .OrderBy(c => c.Date)
-            .ToListAsync();
-
-        return Ok(comments.ToDtoList());
+        var comments = await _service.GetCommentsForPostAsync(postId);
+        return Ok(comments);
     }
 
     [HttpPost]
@@ -42,19 +35,10 @@ public class CommentsController : ControllerBase
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (userId == null) return Unauthorized();
 
-        var postExists = await _context.Posts.AnyAsync(p => p.Id == createCommentDto.PostId);
-        if (!postExists) return NotFound();
+        var createdComment = await _service.CreateCommentAsync(createCommentDto, userId);
+        if (createdComment == null) return NotFound();
 
-        var comment = createCommentDto.ToEntity(userId);
-        
-        _context.Comments.Add(comment);
-        await _context.SaveChangesAsync();
-
-        var createdComment = await _context.Comments
-            .Include(c => c.User)
-            .FirstOrDefaultAsync(c => c.Id == comment.Id);
-
-        return CreatedAtAction(nameof(GetCommentsForPost), new { postId = comment.PostId }, createdComment!.ToDto());
+        return CreatedAtAction(nameof(GetCommentsForPost), new { postId = createCommentDto.PostId }, createdComment);
     }
 
     [HttpDelete("{id:int}")]
@@ -63,18 +47,18 @@ public class CommentsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteComment(int id)
     {
-        var comment = await _context.Comments.FindAsync(id);
-        if (comment == null) return NotFound();
-
         var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (currentUserId == null) return Unauthorized();
 
-        if (comment.UserId != currentUserId)
+        try
+        {
+            var deleted = await _service.DeleteCommentAsync(id, currentUserId);
+            if (!deleted) return NotFound();
+        }
+        catch (UnauthorizedAccessException)
         {
             return Forbid();
         }
-
-        _context.Comments.Remove(comment);
-        await _context.SaveChangesAsync();
 
         return NoContent();
     }

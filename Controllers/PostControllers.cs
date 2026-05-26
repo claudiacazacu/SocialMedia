@@ -1,10 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using instagram.Data;
 using instagram.DTOs;
-using instagram.Mappings;
+using instagram.Services;
+
 namespace instagram.Controllers;
 
 [Route("api/[controller]")]
@@ -12,22 +11,19 @@ namespace instagram.Controllers;
 [Authorize]
 public class PostsController : ControllerBase
 {
-    private readonly AppDbContext _context;
-    
-    public PostsController(AppDbContext context)
+    private readonly IPostService _service;
+
+    public PostsController(IPostService service)
     {
-        _context = context;
+        _service = service;
     }
 
     [HttpGet]
     [ProducesResponseType(typeof(List<PostReadDto>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAllPosts()
     {
-        var posts = await _context.Posts
-            .Include(p => p.User)
-            .OrderByDescending(p => p.DataPublicarii)
-            .ToListAsync();
-        return Ok(posts.ToDtoList());
+        var posts = await _service.GetAllPostsAsync();
+        return Ok(posts);
     }
 
     [HttpPost]
@@ -37,16 +33,11 @@ public class PostsController : ControllerBase
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (userId == null) return Unauthorized();
-        
-        var post = createPostDto.ToEntity(userId);
-        _context.Posts.Add(post);
-        await _context.SaveChangesAsync();
-        
-        var createdPost = await _context.Posts
-            .Include(p => p.User)
-            .FirstOrDefaultAsync(p => p.Id == post.Id);
-            
-        return CreatedAtAction(nameof(GetAllPosts), new { id = post.Id }, createdPost!.ToDto());
+
+        var createdPost = await _service.CreatePostAsync(createPostDto, userId);
+        if (createdPost == null) return BadRequest();
+
+        return CreatedAtAction(nameof(GetAllPosts), new { id = createdPost.Id }, createdPost);
     }
 
     [HttpDelete("{id:int}")]
@@ -55,31 +46,31 @@ public class PostsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeletePost(int id)
     {
-        var post = await _context.Posts.FindAsync(id);   
-        if (post == null) return NotFound();
-        
         var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (post.UserId != currentUserId)
+        if (currentUserId == null) return Unauthorized();
+
+        try
+        {
+            var deleted = await _service.DeletePostAsync(id, currentUserId, false);
+            if (!deleted) return NotFound();
+        }
+        catch (UnauthorizedAccessException)
         {
             return Forbid();
         }
-        
-        _context.Posts.Remove(post);
-        await _context.SaveChangesAsync();
+
         return NoContent();
     }
+
     [Authorize(Roles = "Admin")]
     [HttpDelete("admin/{id:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> AdminDeletePost(int id)
     {
-        var post = await _context.Posts.FindAsync(id);
-        if (post == null) return NotFound();
+        var deleted = await _service.DeletePostAsync(id, string.Empty, true);
+        if (!deleted) return NotFound();
 
-        _context.Posts.Remove(post);
-        await _context.SaveChangesAsync();
-        
         return NoContent();
     }
 }

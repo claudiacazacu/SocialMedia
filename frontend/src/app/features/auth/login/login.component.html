@@ -1,0 +1,32 @@
+<div class="auth-container">
+  <h2>Intră în cont</h2>
+  
+  <div *ngIf="errorMessage" class="error-alert">{{ errorMessage }}</div>
+
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input id="username" type="text" formControlName="username" placeholder="ex: popa_ion" />
+      <span class="error-text" *ngIf="loginForm.get('username')?.touched && loginForm.get('username')?.errors?.['required']">
+        Username-ul este obligatoriu.
+      </span>
+    </div>
+
+    <div class="form-group">
+      <label for="password">Parolă</label>
+      <input id="password" type="password" formControlName="password" placeholder="******" />
+      <span class="error-text" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.errors?.['required']">
+        Parola este obligatorie.
+      </span>
+      <span class="error-text" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.errors?.['minlength']">
+        Parola trebuie să aibă minim 6 caractere.
+      </span>
+    </div>
+
+    <button type="submit" [disabled]="loginForm.invalid || isLoading">
+      {{ isLoading ? 'Se încarcă...' : 'Logare' }}
+    </button>
+  </form>
+  
+  <p class="switch-page">Nu ai cont? <a routerLink="/register">Înregistrează-te</a></p>
+</div>

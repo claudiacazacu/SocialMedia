@@ -1,0 +1,9 @@
+.login-container {
+  max-width: 360px;
+  margin: 1rem auto;
+  padding: 1rem;
+}
+
+button {
+  padding: 0.5rem 1rem;
+}

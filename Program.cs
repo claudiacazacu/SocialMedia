@@ -7,6 +7,7 @@ using instagram.Data;
 using instagram.Models;
 using instagram.Repositories;
 using instagram.Services;
+using instagram.Middlewares;
 using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 using instagram.Data;
 using instagram.Models;
 using instagram.DTOs;
-
 namespace instagram.Controllers
 {
     [Route("api/[controller]")]
@@ -11,10 +11,12 @@ namespace instagram.Controllers
     public class UsersController : ControllerBase
     {
         private readonly AppDbContext _context;
+        
         public UsersController(AppDbContext context)
         {
             _context = context;
         }
+        
         [HttpGet]
         public async Task<IActionResult> GetUsers()
         {
@@ -39,6 +41,7 @@ namespace instagram.Controllers
             };
             _context.Users.Add(newUser);
             await _context.SaveChangesAsync();
+            
             var returnDto = new UserReadDto
             (
                 newUser.Id,
@@ -46,6 +49,21 @@ namespace instagram.Controllers
                 newUser.Email!
             );
             return Ok(returnDto);
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUser(string id)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+            {
+                return NotFound(new { message = "Userul nu a fost găsit." });
+            }
+
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "User șters cu succes de către administrator." });
         }
     }
 }

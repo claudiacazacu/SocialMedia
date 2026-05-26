@@ -1,7 +1,6 @@
 using System.Net;
 using System.Text.Json;
 namespace instagram.Middlewares;
-
 public class GlobalExceptionMiddleware
 {
     private readonly RequestDelegate _next;
@@ -23,7 +22,6 @@ public class GlobalExceptionMiddleware
             await HandleExceptionAsync(context, ex);
         }
     }
-
     private static Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
         context.Response.ContentType = "application/json";

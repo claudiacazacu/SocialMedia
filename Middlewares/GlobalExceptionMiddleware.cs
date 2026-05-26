@@ -5,10 +5,11 @@ namespace instagram.Middlewares;
 public class GlobalExceptionMiddleware
 {
     private readonly RequestDelegate _next;
-
-    public GlobalExceptionMiddleware(RequestDelegate next)
+    private readonly ILogger<GlobalExceptionMiddleware> _logger;
+    public GlobalExceptionMiddleware(RequestDelegate next, ILogger<GlobalExceptionMiddleware> logger)
     {
         _next = next;
+        _logger = logger;
     }
     public async Task InvokeAsync(HttpContext context)
     {
@@ -18,6 +19,7 @@ public class GlobalExceptionMiddleware
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "exceptie random: {Message}", ex.Message);
             await HandleExceptionAsync(context, ex);
         }
     }

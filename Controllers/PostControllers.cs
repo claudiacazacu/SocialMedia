@@ -5,7 +5,6 @@ using System.Security.Claims;
 using instagram.Data;
 using instagram.DTOs;
 using instagram.Mappings;
-
 namespace instagram.Controllers;
 
 [Route("api/[controller]")]

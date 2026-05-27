@@ -1,0 +1,16 @@
+# Variabile de mediu - NU in repo!
+.env
+
+# Node
+node_modules/
+
+# Angular build
+frontend/dist/
+
+# .NET build artifacts
+backend/bin/
+backend/obj/
+
+# Visual Studio
+.vs/
+*.user

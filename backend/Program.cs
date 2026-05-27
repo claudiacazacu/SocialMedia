@@ -12,11 +12,17 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Fix pentru Npgsql + DateTime (necesar la migrare pe PostgreSQL)
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular", policy =>
     {
-        policy.WithOrigins("http://localhost:4200")
+        policy.WithOrigins(
+                "http://localhost:4200",
+                "https://claudiac.student-dev.ro"
+              )
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -111,11 +117,9 @@ builder.Services.AddAuthentication(options =>
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+// Swagger disponibil si in productie (nginx-ul cursului ruteaza /swagger -> api)
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseMiddleware<GlobalExceptionMiddleware>();
 app.UseCors("AllowAngular");
@@ -127,6 +131,9 @@ app.MapControllers();
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
+    // Aplica migrarile automat la startup
+    var db = services.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
     await instagram.Data.SeedData.InitializeAsync(services);
 }
 

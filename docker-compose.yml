@@ -1,0 +1,58 @@
+name: student-${USER:-CHANGE_ME}
+
+services:
+
+  db:
+    image: postgres:16-alpine
+    container_name: student-${USER:-CHANGE_ME}-db
+    environment:
+      POSTGRES_USER:     ${DB_USER:-${SUBDOMAIN:-${USER:-app}}}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-${SUBDOMAIN:-${USER:-app}}-demo-pass-2026}
+      POSTGRES_DB:       ${DB_NAME:-${SUBDOMAIN:-${USER:-app}}}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-${SUBDOMAIN:-${USER:-app}}}"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks: [studlab_net]
+    restart: unless-stopped
+
+  api:
+    build:
+      context: ./backend
+    container_name: student-${USER:-CHANGE_ME}-api
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ConnectionStrings__DefaultConnection: "Host=student-${USER:-CHANGE_ME}-db;Port=5432;Database=${DB_NAME:-${SUBDOMAIN:-${USER:-app}}};Username=${DB_USER:-${SUBDOMAIN:-${USER:-app}}};Password=${DB_PASSWORD:-${SUBDOMAIN:-${USER:-app}}-demo-pass-2026}"
+      Jwt__Key: ${JWT_KEY:-${SUBDOMAIN:-${USER:-app}}-jwt-key-2026-not-for-prod-min-32-chars-pls-replace}
+      Jwt__Issuer: ${JWT_ISSUER:-instagram}
+      Jwt__Audience: ${JWT_AUDIENCE:-instagramFrontend}
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Production}
+    volumes:
+      # Imagini uploadate de utilizatori - persista intre restartari
+      - images_data:/app/wwwroot/images
+    expose: ["8080"]
+    networks: [studlab_net]
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: student-${USER:-CHANGE_ME}-frontend
+    depends_on: [api]
+    expose: ["80"]
+    networks: [studlab_net]
+    restart: unless-stopped
+
+volumes:
+  db_data:
+  images_data:
+
+networks:
+  studlab_net:
+    external: true
+    name: studlab_net

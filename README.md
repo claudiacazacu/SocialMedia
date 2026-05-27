@@ -15,6 +15,44 @@ Un proiect care simuleaza functionalitatile de baza ale unei aplicatii de social
 * **Logging** Sistem de jurnal pentru erori si activitatile APiului
   ![Logging](docs/screenshots/logging.png)
 
+## Rulare
+
+### Pe server (productie)
+Aplicatia este deployata pe [https://claudiac.student-dev.ro](https://claudiac.student-dev.ro) folosind Docker.
+
+Pentru a face update dupa modificari:
+```bash
+ssh claudiac@student-dev.ro
+cd ~/apps/SocialMedia
+git pull
+docker compose up -d --build
+```
+
+### Local (development)
+**Prerequisite:** .NET 9 SDK, Node.js 20+, PostgreSQL
+
+**Backend:**
+```bash
+cd backend
+dotnet restore
+dotnet run
+# API disponibil la http://localhost:5233
+# Swagger la http://localhost:5233/swagger
+```
+
+**Frontend:**
+```bash
+cd frontend
+npm install
+ng serve
+# Aplicatia disponibila la http://localhost:4200
+```
+
+### Cont implicit (creat automat la prima pornire)
+| Username | Parola | Rol |
+|---|---|---|
+| admin_super | admin123 | Admin |
+
 ## Tehnologii
 * **Backend** C# ASP.NET Core Web API
 * **DB** PostgreSQL

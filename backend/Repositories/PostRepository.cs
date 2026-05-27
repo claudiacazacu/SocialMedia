@@ -1,6 +1,7 @@
 using instagram.Data;
 using instagram.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 namespace instagram.Repositories;
 
 public class PostRepository : IPostRepository
@@ -13,6 +14,14 @@ public class PostRepository : IPostRepository
     public async Task<IEnumerable<Post>> GetAllAsync()
     {
         return await _context.Posts
+            .Include(p => p.User)
+            .OrderByDescending(p => p.DataPublicarii)
+            .ToListAsync();
+    }
+    public async Task<IEnumerable<Post>> GetByUserIdAsync(string userId)
+    {
+        return await _context.Posts
+            .Where(p => p.UserId == userId)
             .Include(p => p.User)
             .OrderByDescending(p => p.DataPublicarii)
             .ToListAsync();

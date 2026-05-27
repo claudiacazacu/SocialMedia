@@ -10,7 +10,7 @@ import { User, UpdateUserDto } from '../models/post.models';
 export class UserService {
   private http = inject(HttpClient);
   private apiUrl = `${environment.apiUrl}`;
-  private requestTimeout = 10000; // 10 seconds
+  private requestTimeout = 10000;
 
   getAllUsers(): Observable<User[]> {
     return this.http.get<User[]>(`${this.apiUrl}/users`).pipe(
@@ -19,7 +19,6 @@ export class UserService {
   }
 
   getUserById(id: string): Observable<User> {
-    console.log('[UserService] Fetching user:', id);
     return this.http.get<User>(`${this.apiUrl}/users/${id}`).pipe(
       timeout(this.requestTimeout)
     );

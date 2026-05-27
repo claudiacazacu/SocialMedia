@@ -7,27 +7,11 @@ import { ProfileComponent } from './features/profile/profile.component';
 import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
-  // Rute publice
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
-
-  // Rute protejate
-  {
-    path: 'posts',
-    component: PostListComponent,
-    canActivate: [authGuard]
-  },
-  {
-    path: 'posts/:id',
-    component: PostDetailComponent,
-    canActivate: [authGuard]
-  },
-  {
-    path: 'profile',
-    component: ProfileComponent,
-    canActivate: [authGuard]
-  },
-
+  { path: 'posts', component: PostListComponent, canActivate: [authGuard] },
+  { path: 'posts/:id', component: PostDetailComponent, canActivate: [authGuard] },
+  { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
   { path: '', redirectTo: '/posts', pathMatch: 'full' },
   { path: '**', redirectTo: '/posts' }
 ];

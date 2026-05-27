@@ -21,6 +21,13 @@ public class PostService : IPostService
         return posts.ToDtoList();
     }
 
+    public async Task<IEnumerable<PostReadDto>> GetPostsByUserIdAsync(string userId)
+    {
+        _logger.LogInformation("Fetching posts for user {UserId}", userId);
+        var posts = await _repository.GetByUserIdAsync(userId);
+        return posts.ToDtoList();
+    }
+
     public async Task<PostReadDto?> GetPostByIdAsync(int id)
     {
         _logger.LogInformation("Fetching post with id {PostId}", id);

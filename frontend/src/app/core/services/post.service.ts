@@ -10,23 +10,24 @@ import { Post, CreatePostDto, UpdatePostDto, Comment, CreateCommentDto, Like, Cr
 export class PostService {
   private http = inject(HttpClient);
   private apiUrl = `${environment.apiUrl}`;
-  private requestTimeout = 10000; // 10 seconds
+  private requestTimeout = 10000;
 
-  // Image upload
   uploadImage(file: File): Observable<{ imageUrl: string }> {
     const formData = new FormData();
     formData.append('file', file);
-    console.log('[PostService] Uploading image:', file.name);
     return this.http.post<{ imageUrl: string }>(`${this.apiUrl}/upload/image`, formData).pipe(
-      timeout(this.requestTimeout),
-      // Error handling piped at call site for better logging
+      timeout(this.requestTimeout)
     );
   }
 
-  // Posts
   getAllPosts(): Observable<Post[]> {
-    console.log('[PostService] Fetching all posts from:', `${this.apiUrl}/posts`);
     return this.http.get<Post[]>(`${this.apiUrl}/posts`).pipe(
+      timeout(this.requestTimeout)
+    );
+  }
+
+  getPostsByUserId(userId: string): Observable<Post[]> {
+    return this.http.get<Post[]>(`${this.apiUrl}/posts/user/${userId}`).pipe(
       timeout(this.requestTimeout)
     );
   }
@@ -38,7 +39,6 @@ export class PostService {
   }
 
   createPost(dto: CreatePostDto): Observable<Post> {
-    console.log('[PostService] Creating post with data:', dto);
     return this.http.post<Post>(`${this.apiUrl}/posts`, dto).pipe(
       timeout(this.requestTimeout)
     );
@@ -56,7 +56,6 @@ export class PostService {
     );
   }
 
-  // Comments
   getCommentsForPost(postId: number): Observable<Comment[]> {
     return this.http.get<Comment[]>(`${this.apiUrl}/comments/post/${postId}`).pipe(
       timeout(this.requestTimeout)
@@ -75,7 +74,6 @@ export class PostService {
     );
   }
 
-  // Likes
   getLikesForPost(postId: number): Observable<Like[]> {
     return this.http.get<Like[]>(`${this.apiUrl}/likes/post/${postId}`).pipe(
       timeout(this.requestTimeout)

@@ -1,7 +1,7 @@
-import { Component, OnInit, inject, ElementRef, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject, ElementRef, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { CommonModule, DatePipe } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { PostService } from '../../../core/services/post.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { Post, Like } from '../../../core/models/post.models';
@@ -9,7 +9,7 @@ import { Post, Like } from '../../../core/models/post.models';
 @Component({
   selector: 'app-post-list',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, DatePipe],
   templateUrl: './post-list.component.html',
   styleUrls: ['./post-list.component.css']
 })
@@ -18,6 +18,7 @@ export class PostListComponent implements OnInit {
   private authService = inject(AuthService);
   private router = inject(Router);
   private fb = inject(FormBuilder);
+  private cdr = inject(ChangeDetectorRef);
 
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
@@ -27,7 +28,6 @@ export class PostListComponent implements OnInit {
   errorMessage = '';
   showCreateForm = false;
 
-  // Upload state
   selectedFile: File | null = null;
   previewUrl: string | null = null;
   isUploading = false;
@@ -46,16 +46,15 @@ export class PostListComponent implements OnInit {
 
   loadPosts(): void {
     this.isLoading = true;
-    console.log('[PostListComponent] Loading posts...');
+    this.errorMessage = '';
     this.postService.getAllPosts().subscribe({
       next: (posts) => {
-        console.log('[PostListComponent] Posts loaded successfully:', posts.length);
         this.posts = posts;
         this.isLoading = false;
+        this.cdr.detectChanges();
         posts.forEach(p => this.loadLikes(p.id));
       },
       error: (err) => {
-        console.error('[PostListComponent] Error loading posts:', err);
         if (err.name === 'TimeoutError') {
           this.errorMessage = 'Timeout: Serverul nu răspunde. Verifică dacă backend-ul este pornit.';
         } else if (err.status === 401) {
@@ -64,14 +63,15 @@ export class PostListComponent implements OnInit {
           this.errorMessage = 'Nu s-au putut încărca postările. Detalii: ' + (err.message || err.statusText);
         }
         this.isLoading = false;
+        this.cdr.detectChanges();
       }
     });
   }
 
   loadLikes(postId: number): void {
     this.postService.getLikesForPost(postId).subscribe({
-      next: (likes) => this.likesMap.set(postId, likes),
-      error: () => this.likesMap.set(postId, [])
+      next: (likes) => { this.likesMap.set(postId, likes); this.cdr.detectChanges(); },
+      error: () => { this.likesMap.set(postId, []); this.cdr.detectChanges(); }
     });
   }
 
@@ -80,14 +80,11 @@ export class PostListComponent implements OnInit {
   }
 
   hasLiked(postId: number): boolean {
-    const likes = this.likesMap.get(postId) ?? [];
-    return likes.some(l => l.username === this.currentUsername);
+    return (this.likesMap.get(postId) ?? []).some(l => l.username === this.currentUsername);
   }
 
   getMyLikeId(postId: number): number | null {
-    const likes = this.likesMap.get(postId) ?? [];
-    const myLike = likes.find(l => l.username === this.currentUsername);
-    return myLike?.id ?? null;
+    return (this.likesMap.get(postId) ?? []).find(l => l.username === this.currentUsername)?.id ?? null;
   }
 
   toggleLike(postId: number): void {
@@ -96,12 +93,12 @@ export class PostListComponent implements OnInit {
       if (likeId == null) return;
       this.postService.unlikePost(likeId).subscribe({
         next: () => this.loadLikes(postId),
-        error: (err) => console.error('Unlike error:', err)
+        error: (err) => { console.error('Unlike error:', err); this.cdr.detectChanges(); }
       });
     } else {
       this.postService.likePost(postId).subscribe({
         next: () => this.loadLikes(postId),
-        error: (err) => console.error('Like error:', err)
+        error: (err) => { console.error('Like error:', err); this.cdr.detectChanges(); }
       });
     }
   }
@@ -110,14 +107,12 @@ export class PostListComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     if (!file) return;
-
     this.uploadError = '';
     this.selectedFile = file;
-
-    // Preview local
     const reader = new FileReader();
     reader.onload = (e) => {
       this.previewUrl = e.target?.result as string;
+      this.cdr.detectChanges();
     };
     reader.readAsDataURL(file);
   }
@@ -125,52 +120,45 @@ export class PostListComponent implements OnInit {
   removeImage(): void {
     this.selectedFile = null;
     this.previewUrl = null;
-    if (this.fileInput) {
-      this.fileInput.nativeElement.value = '';
-    }
+    if (this.fileInput) this.fileInput.nativeElement.value = '';
+    this.cdr.detectChanges();
   }
 
   submitPost(): void {
     if (this.createForm.invalid || !this.selectedFile) return;
-
     this.isUploading = true;
     this.uploadError = '';
+    this.cdr.detectChanges();
 
-    console.log('[PostListComponent] Starting post creation...');
     this.postService.uploadImage(this.selectedFile).subscribe({
       next: (res) => {
-        console.log('[PostListComponent] Image uploaded, URL:', res.imageUrl);
         this.postService.createPost({
           descriere: this.createForm.value.descriere,
           imageUrl: res.imageUrl
         }).subscribe({
           next: () => {
-            console.log('[PostListComponent] Post created successfully, reloading...');
             this.createForm.reset();
             this.removeImage();
             this.showCreateForm = false;
             this.isUploading = false;
+            this.cdr.detectChanges();
             this.loadPosts();
           },
           error: (err) => {
-            console.error('[PostListComponent] Error creating post:', err);
-            if (err.name === 'TimeoutError') {
-              this.uploadError = 'Timeout: Serverul nu răspunde la crearea postării.';
-            } else {
-              this.uploadError = 'Imaginea a fost încărcată, dar postarea nu a putut fi creată. Detalii: ' + (err.message || err.statusText);
-            }
+            this.uploadError = err.name === 'TimeoutError'
+              ? 'Timeout: Serverul nu răspunde la crearea postării.'
+              : 'Postarea nu a putut fi creată. Detalii: ' + (err.message || err.statusText);
             this.isUploading = false;
+            this.cdr.detectChanges();
           }
         });
       },
       error: (err) => {
-        console.error('[PostListComponent] Error uploading image:', err);
-        if (err.name === 'TimeoutError') {
-          this.uploadError = 'Timeout: Serverul nu răspunde la încărcarea imaginii.';
-        } else {
-          this.uploadError = 'Eroare la încărcarea imaginii. Încearcă din nou. Detalii: ' + (err.message || err.statusText);
-        }
+        this.uploadError = err.name === 'TimeoutError'
+          ? 'Timeout: Serverul nu răspunde la încărcarea imaginii.'
+          : 'Eroare la încărcarea imaginii. Detalii: ' + (err.message || err.statusText);
         this.isUploading = false;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -182,26 +170,18 @@ export class PostListComponent implements OnInit {
       this.removeImage();
       this.uploadError = '';
     }
+    this.cdr.detectChanges();
   }
 
   deletePost(postId: number): void {
     if (!confirm('Ești sigur că vrei să ștergi această postare?')) return;
     this.postService.deletePost(postId).subscribe({
       next: () => this.loadPosts(),
-      error: (err) => console.error('Delete post error:', err)
+      error: (err) => { console.error('Delete post error:', err); this.cdr.detectChanges(); }
     });
   }
 
-  goToPost(postId: number): void {
-    this.router.navigate(['/posts', postId]);
-  }
-
-  goToProfile(): void {
-    this.router.navigate(['/profile']);
-  }
-
-  logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/login']);
-  }
+  goToPost(postId: number): void { this.router.navigate(['/posts', postId]); }
+  goToProfile(): void { this.router.navigate(['/profile']); }
+  logout(): void { this.authService.logout(); this.router.navigate(['/login']); }
 }

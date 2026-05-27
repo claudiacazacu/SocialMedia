@@ -131,6 +131,25 @@
   cursor: pointer;
 }
 
+.post-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.75rem; }
+
+.btn-like {
+  background: transparent;
+  border: 1px solid #dbdbdb;
+  padding: 0.3rem 0.8rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  color: #262626;
+  transition: all 0.15s;
+}
+
+.btn-like.liked {
+  border-color: #ed4956;
+  color: #ed4956;
+  background: #fff0f1;
+}
+
 .error { color: #e74c3c; font-size: 0.82rem; display: block; margin-bottom: 0.5rem; }
 .error-msg { text-align: center; color: #e74c3c; padding: 1rem; }
 .loading { text-align: center; color: #888; padding: 2rem; }

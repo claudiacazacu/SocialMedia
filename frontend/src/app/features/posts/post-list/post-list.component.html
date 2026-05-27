@@ -1,5 +1,4 @@
 <div class="page-wrapper">
-  <!-- Navbar -->
   <nav class="navbar">
     <span class="brand">📸 Instagram</span>
     <div class="nav-actions">
@@ -10,7 +9,6 @@
   </nav>
 
   <div class="container">
-    <!-- Header -->
     <div class="feed-header">
       <h2>Feed</h2>
       <button class="btn-primary" (click)="toggleCreateForm()">
@@ -18,98 +16,85 @@
       </button>
     </div>
 
-    <!-- Formular creare postare -->
-    <div class="create-form-card" *ngIf="showCreateForm">
-      <h3>Postare nouă</h3>
-      <form [formGroup]="createForm" (ngSubmit)="submitPost()">
-
-        <!-- Upload imagine -->
-        <div class="form-group">
-          <label>Imagine</label>
-
-          <div class="upload-area" *ngIf="!previewUrl" (click)="fileInput.click()">
-            <span class="upload-icon">🖼️</span>
-            <p>Click pentru a selecta o imagine</p>
-            <small>JPG, PNG, GIF, WEBP — max 5 MB</small>
+    @if (showCreateForm) {
+      <div class="create-form-card">
+        <h3>Postare nouă</h3>
+        <form [formGroup]="createForm" (ngSubmit)="submitPost()">
+          <div class="form-group">
+            <label>Imagine</label>
+            @if (!previewUrl) {
+              <div class="upload-area" (click)="fileInput.click()">
+                <span class="upload-icon">🖼️</span>
+                <p>Click pentru a selecta o imagine</p>
+                <small>JPG, PNG, GIF, WEBP — max 5 MB</small>
+              </div>
+            }
+            @if (previewUrl) {
+              <div class="preview-area">
+                <img [src]="previewUrl" alt="preview" class="preview-img" />
+                <button type="button" class="btn-remove-img" (click)="removeImage()">✕ Schimbă</button>
+              </div>
+            }
+            <input #fileInput type="file" accept="image/*" style="display:none" (change)="onFileSelected($event)" />
           </div>
-
-          <div class="preview-area" *ngIf="previewUrl">
-            <img [src]="previewUrl" alt="preview" class="preview-img" />
-            <button type="button" class="btn-remove-img" (click)="removeImage()">✕ Schimbă</button>
+          <div class="form-group">
+            <label>Descriere</label>
+            <textarea formControlName="descriere" rows="3" placeholder="Ce vrei să spui?"></textarea>
+            @if (createForm.get('descriere')?.invalid && createForm.get('descriere')?.touched) {
+              <span class="error">Descrierea este obligatorie (minim 3 caractere).</span>
+            }
           </div>
-
-          <input
-            #fileInput
-            type="file"
-            accept="image/*"
-            style="display:none"
-            (change)="onFileSelected($event)"
-          />
-        </div>
-
-        <!-- Descriere -->
-        <div class="form-group">
-          <label>Descriere</label>
-          <textarea formControlName="descriere" rows="3" placeholder="Ce vrei să spui?"></textarea>
-          <span class="error"
-            *ngIf="createForm.get('descriere')?.invalid && createForm.get('descriere')?.touched">
-            Descrierea este obligatorie (minim 3 caractere).
-          </span>
-        </div>
-
-        <div class="error" *ngIf="uploadError">{{ uploadError }}</div>
-
-        <button
-          type="submit"
-          class="btn-primary"
-          [disabled]="createForm.invalid || !selectedFile || isUploading"
-        >
-          {{ isUploading ? 'Se încarcă...' : 'Publică' }}
-        </button>
-      </form>
-    </div>
-
-    <!-- Loading / eroare -->
-    <div class="loading" *ngIf="isLoading && !showCreateForm">Se încarcă postările...</div>
-    <div class="error-msg" *ngIf="errorMessage && !showCreateForm">{{ errorMessage }}</div>
-
-    <!-- Lista de posturi - ascunsă când e deschis formularul de creare -->
-    <div class="posts-grid" *ngIf="!isLoading && !showCreateForm && posts.length > 0">
-      <div class="post-card" *ngFor="let post of posts">
-        <img
-          [src]="post.imageUrl"
-          [alt]="post.descriere"
-          class="post-image"
-          (error)="$any($event.target).src = 'https://placehold.co/400x300?text=No+Image'"
-        />
-        <div class="post-body">
-          <p class="post-author">&#64;{{ post.numeAutor }}</p>
-          <p class="post-desc">{{ post.descriere }}</p>
-          <p class="post-date">{{ post.dataPublicarii | date:'dd MMM yyyy, HH:mm' }}</p>
-
-          <div class="post-actions">
-            <button
-              class="btn-like"
-              [class.liked]="hasLiked(post.id)"
-              (click)="toggleLike(post.id)"
-            >
-              {{ hasLiked(post.id) ? '❤️' : '🤍' }} {{ getLikesCount(post.id) }}
-            </button>
-            <button class="btn-outline-sm" (click)="goToPost(post.id)">💬 Comentarii</button>
-            <button
-              *ngIf="post.numeAutor === currentUsername || isAdmin"
-              class="btn-danger-sm"
-              (click)="deletePost(post.id)"
-            >
-              🗑️ Șterge
-            </button>
-          </div>
-        </div>
+          @if (uploadError) {
+            <div class="error">{{ uploadError }}</div>
+          }
+          <button type="submit" class="btn-primary" [disabled]="createForm.invalid || !selectedFile || isUploading">
+            {{ isUploading ? 'Se încarcă...' : 'Publică' }}
+          </button>
+        </form>
       </div>
-    </div>
+    }
 
-    <div class="empty-state" *ngIf="!isLoading && !showCreateForm && posts.length === 0 && !errorMessage">
-      <p>Nu există postări încă. Fii primul!</p>
-    </div>
+    @if (isLoading && !showCreateForm) {
+      <div class="loading">Se încarcă postările...</div>
+    }
+
+    @if (errorMessage && !showCreateForm) {
+      <div class="error-msg">
+        {{ errorMessage }}
+        <br />
+        <button class="btn-outline" style="margin-top:0.75rem" (click)="loadPosts()">Reîncearcă</button>
+      </div>
+    }
+
+    @if (!isLoading && !showCreateForm && posts.length > 0) {
+      <div class="posts-grid">
+        @for (post of posts; track post.id) {
+          <div class="post-card">
+            <img [src]="post.imageUrl" [alt]="post.descriere" class="post-image"
+              (error)="$any($event.target).src = 'https://placehold.co/400x300?text=No+Image'" />
+            <div class="post-body">
+              <p class="post-author">&#64;{{ post.numeAutor }}</p>
+              <p class="post-desc">{{ post.descriere }}</p>
+              <p class="post-date">{{ post.dataPublicarii | date:'dd MMM yyyy, HH:mm' }}</p>
+              <div class="post-actions">
+                <button class="btn-like" [class.liked]="hasLiked(post.id)" (click)="toggleLike(post.id)">
+                  {{ hasLiked(post.id) ? '❤️' : '🤍' }} {{ getLikesCount(post.id) }}
+                </button>
+                <button class="btn-outline-sm" (click)="goToPost(post.id)">💬 Comentarii</button>
+                @if (post.numeAutor === currentUsername || isAdmin) {
+                  <button class="btn-danger-sm" (click)="deletePost(post.id)">🗑️ Șterge</button>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    @if (!isLoading && !showCreateForm && posts.length === 0 && !errorMessage) {
+      <div class="empty-state">
+        <p>Nu există postări încă. Fii primul!</p>
+      </div>
+    }
   </div>
 </div>

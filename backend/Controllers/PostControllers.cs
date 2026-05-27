@@ -26,6 +26,14 @@ public class PostsController : ControllerBase
         return Ok(posts);
     }
 
+    [HttpGet("user/{userId}")]
+    [ProducesResponseType(typeof(List<PostReadDto>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetPostsByUser(string userId)
+    {
+        var posts = await _service.GetPostsByUserIdAsync(userId);
+        return Ok(posts);
+    }
+
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(PostReadDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

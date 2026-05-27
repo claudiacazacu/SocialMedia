@@ -6,10 +6,15 @@
   </nav>
 
   <div class="container">
-    <div class="loading" *ngIf="isLoading">Se încarcă...</div>
-    <div class="error-msg" *ngIf="errorMessage">{{ errorMessage }}</div>
+    @if (isLoading) {
+      <div class="loading">Se încarcă...</div>
+    }
 
-    <div *ngIf="post && !isLoading">
+    @if (errorMessage) {
+      <div class="error-msg">{{ errorMessage }}</div>
+    }
+
+    @if (post && !isLoading) {
       <!-- Post -->
       <div class="post-card">
         <img
@@ -22,6 +27,17 @@
           <p class="post-author">&#64;{{ post.numeAutor }}</p>
           <p class="post-desc">{{ post.descriere }}</p>
           <p class="post-date">{{ post.dataPublicarii | date:'dd MMM yyyy, HH:mm' }}</p>
+
+          <!-- Like -->
+          <div class="post-actions">
+            <button
+              class="btn-like"
+              [class.liked]="hasLiked"
+              (click)="toggleLike()"
+            >
+              {{ hasLiked ? '❤️' : '🤍' }} {{ likesCount }} {{ likesCount === 1 ? 'like' : 'like-uri' }}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -29,7 +45,7 @@
       <div class="comments-section">
         <h3>Comentarii ({{ comments.length }})</h3>
 
-        <!-- Form adaugare comentariu -->
+        <!-- Form adăugare comentariu -->
         <form [formGroup]="commentForm" (ngSubmit)="submitComment()" class="comment-form">
           <input
             formControlName="content"
@@ -39,30 +55,33 @@
           />
           <button type="submit" class="btn-primary" [disabled]="commentForm.invalid">Trimite</button>
         </form>
-        <span class="error" *ngIf="submitError">{{ submitError }}</span>
+
+        @if (submitError) {
+          <span class="error">{{ submitError }}</span>
+        }
 
         <!-- Lista comentarii -->
         <div class="comment-list">
-          <div class="comment-item" *ngFor="let comment of comments">
-            <div class="comment-header">
-              <span class="comment-author">&#64;{{ comment.username }}</span>
-              <span class="comment-date">{{ comment.date | date:'dd MMM, HH:mm' }}</span>
+          @for (comment of comments; track comment.id) {
+            <div class="comment-item">
+              <div class="comment-header">
+                <span class="comment-author">&#64;{{ comment.username }}</span>
+                <span class="comment-date">{{ comment.date | date:'dd MMM, HH:mm' }}</span>
+              </div>
+              <p class="comment-content">{{ comment.content }}</p>
+              @if (comment.username === currentUsername) {
+                <button class="btn-danger-sm" (click)="deleteComment(comment.id)">Șterge</button>
+              }
             </div>
-            <p class="comment-content">{{ comment.content }}</p>
-            <button
-              *ngIf="comment.username === currentUsername"
-              class="btn-danger-sm"
-              (click)="deleteComment(comment.id)"
-            >
-              Șterge
-            </button>
-          </div>
+          }
 
-          <div class="empty-comments" *ngIf="comments.length === 0">
-            <p>Nu există comentarii. Fii primul!</p>
-          </div>
+          @if (comments.length === 0) {
+            <div class="empty-comments">
+              <p>Nu există comentarii. Fii primul!</p>
+            </div>
+          }
         </div>
       </div>
-    </div>
+    }
   </div>
 </div>

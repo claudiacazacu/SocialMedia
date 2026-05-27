@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, tap, catchError, throwError } from 'rxjs';
-import { environment } from '../../../environments/environment';
 import { LoginRequest, RegisterRequest, AuthResponse } from '../models/auth.models';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -30,8 +30,6 @@ export class AuthService {
         if (token) {
           localStorage.setItem('jwt_token', token);
           this.loggedInSubject.next(true);
-        } else {
-          console.warn('Login response has no token:', response);
         }
       }),
       catchError(err => {
@@ -54,42 +52,50 @@ export class AuthService {
     return localStorage.getItem('jwt_token');
   }
 
-  getCurrentUserId(): string | null {
+  private decodeToken(): Record<string, unknown> | null {
     const token = this.getToken();
     if (!token) return null;
     try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      return payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier']
-        ?? payload['sub']
-        ?? null;
-    } catch (_e) {
+      const payload = token.split('.')[1];
+      if (!payload) return null;
+      const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+      const json = decodeURIComponent(
+        atob(base64).split('').map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')
+      );
+      return JSON.parse(json);
+    } catch (error) {
+      console.error('Failed to decode JWT token', error);
       return null;
     }
   }
 
   getCurrentUsername(): string | null {
-    const token = this.getToken();
-    if (!token) return null;
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      return payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name']
-        ?? payload['unique_name']
-        ?? null;
-    } catch (_e) {
-      return null;
-    }
+    const tokenData = this.decodeToken();
+    return (
+      tokenData?.['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] as string
+      || tokenData?.['name'] as string
+      || tokenData?.['unique_name'] as string
+      || null
+    );
+  }
+
+  getCurrentUserId(): string | null {
+    const tokenData = this.decodeToken();
+    return (
+      tokenData?.['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'] as string
+      || tokenData?.['nameid'] as string
+      || tokenData?.['sub'] as string
+      || null
+    );
   }
 
   isAdmin(): boolean {
-    const token = this.getToken();
-    if (!token) return false;
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      const roles = payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
-      if (Array.isArray(roles)) return roles.includes('Admin');
-      return roles === 'Admin';
-    } catch (_e) {
-      return false;
-    }
+    const tokenData = this.decodeToken();
+    if (!tokenData) return false;
+    const roleClaim = tokenData?.['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']
+      || tokenData?.['role']
+      || tokenData?.['roles'];
+    if (Array.isArray(roleClaim)) return roleClaim.includes('Admin');
+    return typeof roleClaim === 'string' && roleClaim === 'Admin';
   }
 }

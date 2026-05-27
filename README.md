@@ -4,13 +4,13 @@ Un proiect care simuleaza functionalitatile de baza ale unei aplicatii de social
 
 ## Functionalitati
 * **Atentificare si securitate:** Sistem de login si register securizat, folosind un JWT.
-  <img src="docs/screenshots/login.png" width="600"/>
+  <img src="docs/screenshots/login.png" width="500"/>
   <img src="docs/screenshots/register.png" width="400"/>
 * **Sistem de roluri:** Acces restrictionat in functie de rolul contului- useri normali, dar si un admin pentru moderarea continutului
   <br/>
   <img src="docs/screenshots/roluri.png" width="800"/>
 * **Operatii CRUD:** Pentru gestionarea postarilor/comentariilor/like urilor/ urmaritorilor
-   <img src="docs/screenshots/feed.png" width="600"/>
+   <img src="docs/screenshots/feed.png" width="800"/>
   <img src="docs/screenshots/profil.png" width="400"/>
 * **Logging** Sistem de jurnal pentru erori si activitatile APiului
   ![Logging](docs/screenshots/logging.png)
@@ -48,7 +48,7 @@ ng serve
 # Aplicatia disponibila la http://localhost:4200
 ```
 
-### Cont implicit (creat automat la prima pornire)
+### Cont implicit 
 | Username | Parola | Rol |
 |---|---|---|
 | admin_super | admin123 | Admin |

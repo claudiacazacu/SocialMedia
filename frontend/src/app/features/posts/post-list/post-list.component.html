@@ -13,7 +13,7 @@
     <!-- Header -->
     <div class="feed-header">
       <h2>Feed</h2>
-      <button class="btn-primary" (click)="showCreateForm = !showCreateForm">
+      <button class="btn-primary" (click)="toggleCreateForm()">
         {{ showCreateForm ? 'Anulează' : '+ Postare nouă' }}
       </button>
     </div>
@@ -22,30 +22,59 @@
     <div class="create-form-card" *ngIf="showCreateForm">
       <h3>Postare nouă</h3>
       <form [formGroup]="createForm" (ngSubmit)="submitPost()">
+
+        <!-- Upload imagine -->
+        <div class="form-group">
+          <label>Imagine</label>
+
+          <div class="upload-area" *ngIf="!previewUrl" (click)="fileInput.click()">
+            <span class="upload-icon">🖼️</span>
+            <p>Click pentru a selecta o imagine</p>
+            <small>JPG, PNG, GIF, WEBP — max 5 MB</small>
+          </div>
+
+          <div class="preview-area" *ngIf="previewUrl">
+            <img [src]="previewUrl" alt="preview" class="preview-img" />
+            <button type="button" class="btn-remove-img" (click)="removeImage()">✕ Schimbă</button>
+          </div>
+
+          <input
+            #fileInput
+            type="file"
+            accept="image/*"
+            style="display:none"
+            (change)="onFileSelected($event)"
+          />
+        </div>
+
+        <!-- Descriere -->
         <div class="form-group">
           <label>Descriere</label>
           <textarea formControlName="descriere" rows="3" placeholder="Ce vrei să spui?"></textarea>
-          <span class="error" *ngIf="createForm.get('descriere')?.invalid && createForm.get('descriere')?.touched">
+          <span class="error"
+            *ngIf="createForm.get('descriere')?.invalid && createForm.get('descriere')?.touched">
             Descrierea este obligatorie (minim 3 caractere).
           </span>
         </div>
-        <div class="form-group">
-          <label>URL Imagine</label>
-          <input type="text" formControlName="imageUrl" placeholder="https://..." />
-          <span class="error" *ngIf="createForm.get('imageUrl')?.invalid && createForm.get('imageUrl')?.touched">
-            URL-ul imaginii este obligatoriu.
-          </span>
-        </div>
-        <button type="submit" class="btn-primary" [disabled]="createForm.invalid">Publică</button>
+
+        <div class="error" *ngIf="uploadError">{{ uploadError }}</div>
+
+        <button
+          type="submit"
+          class="btn-primary"
+          [disabled]="createForm.invalid || !selectedFile || isUploading"
+        >
+          {{ isUploading ? 'Se încarcă...' : 'Publică' }}
+        </button>
       </form>
     </div>
 
     <!-- Loading / eroare -->
-    <div class="loading" *ngIf="isLoading">Se încarcă postările...</div>
-    <div class="error-msg" *ngIf="errorMessage">{{ errorMessage }}</div>
+    <div class="loading" *ngIf="isLoading && !showCreateForm">Se încarcă postările...</div>
+    <div class="error-msg" *ngIf="errorMessage && !showCreateForm">{{ errorMessage }}</div>
 
-    <!-- Lista de posturi -->
-    <div class="posts-grid" *ngIf="!isLoading && posts.length > 0">
+    <!-- Lista de posturi - ascunsă când e deschis formularul de creare -->
+    <div class="posts-grid" *ngIf="!isLoading && !showCreateForm && posts.length > 0">
       <div class="post-card" *ngFor="let post of posts">
         <img
           [src]="post.imageUrl"
@@ -79,7 +108,7 @@
       </div>
     </div>
 
-    <div class="empty-state" *ngIf="!isLoading && posts.length === 0 && !errorMessage">
+    <div class="empty-state" *ngIf="!isLoading && !showCreateForm && posts.length === 0 && !errorMessage">
       <p>Nu există postări încă. Fii primul!</p>
     </div>
   </div>

@@ -16,6 +16,7 @@
         <div class="profile-info">
           <h2>{{ user.username }}</h2>
           <p class="profile-email">{{ user.email }}</p>
+          <p class="post-count">📸 {{ userPosts.length }} postări</p>
         </div>
       </div>
 
@@ -68,6 +69,38 @@
             <button type="button" class="btn-outline" (click)="cancelEdit()">Anulează</button>
           </div>
         </form>
+      </div>
+
+      <!-- Postări utilizator -->
+      <div class="posts-section">
+        <h3>Postările mele</h3>
+        <div class="loading" *ngIf="isLoadingPosts">Se încarcă postările...</div>
+        <div class="error-msg" *ngIf="postsErrorMessage && !isLoadingPosts">{{ postsErrorMessage }}</div>
+
+        <div class="posts-grid" *ngIf="!isLoadingPosts && userPosts.length > 0">
+          <div class="post-card" *ngFor="let post of userPosts">
+            <img
+              [src]="post.imageUrl"
+              [alt]="post.descriere"
+              class="post-image"
+              (error)="$any($event.target).src = 'https://placehold.co/400x300?text=No+Image'"
+            />
+            <div class="post-body">
+              <p class="post-author">&#64;{{ post.numeAutor }}</p>
+              <p class="post-desc">{{ post.descriere }}</p>
+              <p class="post-date">{{ post.dataPublicarii | date:'dd MMM yyyy, HH:mm' }}</p>
+
+              <div class="post-actions">
+                <button class="btn-outline-sm" (click)="goToPost(post.id)">💬 Comentarii</button>
+                <button class="btn-danger-sm" (click)="deletePost(post.id)">🗑️ Șterge</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="empty-state" *ngIf="!isLoadingPosts && userPosts.length === 0 && !postsErrorMessage">
+          <p>Nu ai publicat postări încă. 📸</p>
+        </div>
       </div>
     </div>
   </div>

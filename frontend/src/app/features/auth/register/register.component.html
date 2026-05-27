@@ -1,43 +1,62 @@
 <div class="auth-container">
+  <div class="logo">📸</div>
   <h2>Creează un cont nou</h2>
-  
+  <p class="subtitle">Înregistrează-te pentru a vedea poze de la prieteni.</p>
+
   <div *ngIf="errorMessage" class="error-alert">{{ errorMessage }}</div>
 
   <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-    <div class="form-group">
-      <label for="nume">Nume</label>
-      <input id="nume" type="text" formControlName="nume" />
-      <span class="error-text" *ngIf="registerForm.get('nume')?.touched && registerForm.get('nume')?.invalid">Numele este obligatoriu.</span>
-    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="nume">Nume</label>
+        <input id="nume" type="text" formControlName="nume" placeholder="ex: Popescu" />
+        <span class="error-text"
+          *ngIf="registerForm.get('nume')?.touched && registerForm.get('nume')?.invalid">
+          Obligatoriu.
+        </span>
+      </div>
 
-    <div class="form-group">
-      <label for="prenume">Prenume</label>
-      <input id="prenume" type="text" formControlName="prenume" />
-      <span class="error-text" *ngIf="registerForm.get('prenume')?.touched && registerForm.get('prenume')?.invalid">Prenumele este obligatoriu.</span>
+      <div class="form-group">
+        <label for="prenume">Prenume</label>
+        <input id="prenume" type="text" formControlName="prenume" placeholder="ex: Ion" />
+        <span class="error-text"
+          *ngIf="registerForm.get('prenume')?.touched && registerForm.get('prenume')?.invalid">
+          Obligatoriu.
+        </span>
+      </div>
     </div>
 
     <div class="form-group">
       <label for="username">Username</label>
-      <input id="username" type="text" formControlName="username" />
-      <span class="error-text" *ngIf="registerForm.get('username')?.touched && registerForm.get('username')?.invalid">Username-ul este obligatoriu.</span>
+      <input id="username" type="text" formControlName="username" placeholder="ex: ion_popescu" />
+      <span class="error-text"
+        *ngIf="registerForm.get('username')?.touched && registerForm.get('username')?.invalid">
+        Username-ul este obligatoriu.
+      </span>
     </div>
 
     <div class="form-group">
       <label for="email">Email</label>
-      <input id="email" type="email" formControlName="email" />
-      <span class="error-text" *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.invalid">Introdu un email valid.</span>
+      <input id="email" type="email" formControlName="email" placeholder="ex: ion@email.com" />
+      <span class="error-text"
+        *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.invalid">
+        Introdu un email valid.
+      </span>
     </div>
 
     <div class="form-group">
       <label for="password">Parolă</label>
-      <input id="password" type="password" formControlName="password" />
-      <span class="error-text" *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid">Parola e obligatorie (min 6 caractere).</span>
+      <input id="password" type="password" formControlName="password" placeholder="minim 6 caractere" />
+      <span class="error-text"
+        *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid">
+        Parola trebuie să aibă minim 6 caractere.
+      </span>
     </div>
 
     <button type="submit" [disabled]="registerForm.invalid || isLoading">
-      {{ isLoading ? 'Se încarcă...' : 'Înregistrare' }}
+      {{ isLoading ? 'Se înregistrează...' : 'Înregistrare' }}
     </button>
   </form>
-  
-  <p class="switch-page">Ai deja cont? <a routerLink="/login">Loghează-te aici</a></p>
+
+  <p class="switch-page">Ai deja cont? <a routerLink="/login">Loghează-te</a></p>
 </div>

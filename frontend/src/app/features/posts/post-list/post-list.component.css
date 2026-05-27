@@ -87,6 +87,70 @@
   resize: vertical;
 }
 
+.upload-area {
+  border: 2px dashed #dbdbdb;
+  border-radius: 10px;
+  padding: 2rem 1rem;
+  text-align: center;
+  cursor: pointer;
+  background: #fafafa;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.upload-area:hover {
+  border-color: #0095f6;
+  background: #f0f8ff;
+}
+
+.upload-icon {
+  font-size: 2.5rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.upload-area p {
+  margin: 0.25rem 0;
+  color: #262626;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.upload-area small {
+  color: #aaa;
+  font-size: 0.8rem;
+}
+
+.preview-area {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.preview-img {
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+  display: block;
+  border-radius: 10px;
+}
+
+.btn-remove-img {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+.btn-remove-img:hover {
+  background: rgba(0,0,0,0.8);
+}
+
 .error {
   color: #e74c3c;
   font-size: 0.8rem;

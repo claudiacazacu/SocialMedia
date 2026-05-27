@@ -1,9 +1,120 @@
-.login-container {
-  max-width: 360px;
-  margin: 1rem auto;
-  padding: 1rem;
+* {
+  box-sizing: border-box;
 }
 
-button {
-  padding: 0.5rem 1rem;
+:host {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #fafafa;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.auth-container {
+  background: #fff;
+  border: 1px solid #dbdbdb;
+  border-radius: 12px;
+  padding: 2.5rem 2rem;
+  width: 100%;
+  max-width: 380px;
+  text-align: center;
+}
+
+.logo {
+  font-size: 2.2rem;
+  margin-bottom: 0.25rem;
+}
+
+.auth-container h2 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #262626;
+  margin: 0 0 1.5rem 0;
+}
+
+.form-group {
+  margin-bottom: 0.85rem;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 0.3rem;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.6rem 0.85rem;
+  border: 1px solid #dbdbdb;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  background: #fafafa;
+  transition: border-color 0.2s;
+  outline: none;
+}
+
+.form-group input:focus {
+  border-color: #a8a8a8;
+  background: #fff;
+}
+
+.error-text {
+  color: #e74c3c;
+  font-size: 0.75rem;
+  display: block;
+  margin-top: 0.2rem;
+}
+
+.error-alert {
+  background: #fdecea;
+  color: #c0392b;
+  border: 1px solid #f5c6cb;
+  border-radius: 6px;
+  padding: 0.6rem 0.85rem;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+button[type="submit"] {
+  width: 100%;
+  padding: 0.65rem;
+  margin-top: 0.5rem;
+  background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+button[type="submit"]:hover {
+  opacity: 0.9;
+}
+
+button[type="submit"]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.switch-page {
+  margin-top: 1.25rem;
+  font-size: 0.88rem;
+  color: #555;
+}
+
+.switch-page a {
+  color: #0095f6;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.switch-page a:hover {
+  text-decoration: underline;
 }

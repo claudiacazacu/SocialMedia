@@ -127,3 +127,117 @@
 .error-msg { color: #e74c3c; text-align: center; padding: 1rem; }
 .success-msg { background: #d4edda; color: #155724; border-radius: 8px; padding: 0.75rem 1rem; margin-bottom: 1rem; }
 .loading { text-align: center; color: #888; padding: 2rem; }
+
+/* Posts section */
+.posts-section {
+  background: #fff;
+  border: 1px solid #dbdbdb;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-top: 2rem;
+}
+
+.posts-section h3 {
+  margin: 0 0 1.5rem 0;
+  color: #262626;
+  text-align: center;
+}
+
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.post-card {
+  border: 1px solid #dbdbdb;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+.post-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.post-image {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  display: block;
+}
+
+.post-body {
+  padding: 0.75rem;
+  font-size: 0.8rem;
+}
+
+.post-author {
+  margin: 0 0 0.3rem 0;
+  color: #262626;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.post-desc {
+  margin: 0 0 0.3rem 0;
+  color: #555;
+  font-size: 0.75rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.post-date {
+  margin: 0 0 0.5rem 0;
+  color: #999;
+  font-size: 0.7rem;
+}
+
+.post-actions {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.btn-outline-sm {
+  background: transparent;
+  border: 1px solid #dbdbdb;
+  padding: 0.3rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  cursor: pointer;
+  color: #262626;
+  white-space: nowrap;
+}
+
+.btn-danger-sm {
+  background: transparent;
+  border: 1px solid #e74c3c;
+  padding: 0.3rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  cursor: pointer;
+  color: #e74c3c;
+  white-space: nowrap;
+}
+
+.empty-state {
+  text-align: center;
+  color: #888;
+  padding: 2rem 1rem;
+}
+
+.post-count {
+  margin: 0;
+  color: #888;
+  font-size: 0.85rem;
+}
+

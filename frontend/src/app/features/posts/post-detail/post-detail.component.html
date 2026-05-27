@@ -1,0 +1,68 @@
+<div class="page-wrapper">
+  <nav class="navbar">
+    <button class="btn-back" (click)="goBack()">← Înapoi</button>
+    <span class="brand">📸 Instagram</span>
+    <span></span>
+  </nav>
+
+  <div class="container">
+    <div class="loading" *ngIf="isLoading">Se încarcă...</div>
+    <div class="error-msg" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+    <div *ngIf="post && !isLoading">
+      <!-- Post -->
+      <div class="post-card">
+        <img
+          [src]="post.imageUrl"
+          [alt]="post.descriere"
+          class="post-image"
+          (error)="$any($event.target).src = 'https://placehold.co/600x400?text=No+Image'"
+        />
+        <div class="post-body">
+          <p class="post-author">&#64;{{ post.numeAutor }}</p>
+          <p class="post-desc">{{ post.descriere }}</p>
+          <p class="post-date">{{ post.dataPublicarii | date:'dd MMM yyyy, HH:mm' }}</p>
+        </div>
+      </div>
+
+      <!-- Comentarii -->
+      <div class="comments-section">
+        <h3>Comentarii ({{ comments.length }})</h3>
+
+        <!-- Form adaugare comentariu -->
+        <form [formGroup]="commentForm" (ngSubmit)="submitComment()" class="comment-form">
+          <input
+            formControlName="content"
+            type="text"
+            placeholder="Adaugă un comentariu..."
+            class="comment-input"
+          />
+          <button type="submit" class="btn-primary" [disabled]="commentForm.invalid">Trimite</button>
+        </form>
+        <span class="error" *ngIf="submitError">{{ submitError }}</span>
+
+        <!-- Lista comentarii -->
+        <div class="comment-list">
+          <div class="comment-item" *ngFor="let comment of comments">
+            <div class="comment-header">
+              <span class="comment-author">&#64;{{ comment.username }}</span>
+              <span class="comment-date">{{ comment.date | date:'dd MMM, HH:mm' }}</span>
+            </div>
+            <p class="comment-content">{{ comment.content }}</p>
+            <button
+              *ngIf="comment.username === currentUsername"
+              class="btn-danger-sm"
+              (click)="deleteComment(comment.id)"
+            >
+              Șterge
+            </button>
+          </div>
+
+          <div class="empty-comments" *ngIf="comments.length === 0">
+            <p>Nu există comentarii. Fii primul!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

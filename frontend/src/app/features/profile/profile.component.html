@@ -1,0 +1,74 @@
+<div class="page-wrapper">
+  <nav class="navbar">
+    <button class="btn-back" (click)="goToFeed()">← Feed</button>
+    <span class="brand">📸 Instagram</span>
+    <button class="btn-outline" (click)="logout()">Logout</button>
+  </nav>
+
+  <div class="container">
+    <div class="loading" *ngIf="isLoading">Se încarcă profilul...</div>
+    <div class="error-msg" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+    <div *ngIf="user && !isLoading">
+      <!-- Card profil -->
+      <div class="profile-card">
+        <div class="avatar">{{ user.username.charAt(0).toUpperCase() }}</div>
+        <div class="profile-info">
+          <h2>{{ user.username }}</h2>
+          <p class="profile-email">{{ user.email }}</p>
+        </div>
+      </div>
+
+      <!-- Mesaj succes -->
+      <div class="success-msg" *ngIf="updateSuccess">
+        ✅ Profilul a fost actualizat cu succes!
+      </div>
+
+      <!-- Vizualizare informatii -->
+      <div class="edit-card" *ngIf="!isEditing">
+        <h3>Informații cont</h3>
+        <div class="info-row">
+          <span class="info-label">Username</span>
+          <span class="info-value">{{ user.username }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Email</span>
+          <span class="info-value">{{ user.email }}</span>
+        </div>
+        <button class="btn-primary" (click)="startEdit()">✏️ Editează profil</button>
+      </div>
+
+      <!-- Formular editare -->
+      <div class="edit-card" *ngIf="isEditing">
+        <h3>Editează profilul</h3>
+        <form [formGroup]="editForm" (ngSubmit)="submitEdit()">
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" formControlName="email" />
+            <span class="error" *ngIf="editForm.get('email')?.invalid && editForm.get('email')?.touched">
+              Introdu un email valid.
+            </span>
+          </div>
+          <div class="form-group">
+            <label>Nume</label>
+            <input type="text" formControlName="nume" placeholder="ex: Popescu" />
+            <span class="error" *ngIf="editForm.get('nume')?.invalid && editForm.get('nume')?.touched">
+              Numele este obligatoriu.
+            </span>
+          </div>
+          <div class="form-group">
+            <label>Prenume</label>
+            <input type="text" formControlName="prenume" placeholder="ex: Ion" />
+            <span class="error" *ngIf="editForm.get('prenume')?.invalid && editForm.get('prenume')?.touched">
+              Prenumele este obligatoriu.
+            </span>
+          </div>
+          <div class="btn-row">
+            <button type="submit" class="btn-primary" [disabled]="editForm.invalid">Salvează</button>
+            <button type="button" class="btn-outline" (click)="cancelEdit()">Anulează</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

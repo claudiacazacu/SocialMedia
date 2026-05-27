@@ -53,4 +53,43 @@ export class AuthService {
   getToken(): string | null {
     return localStorage.getItem('jwt_token');
   }
+
+  getCurrentUserId(): string | null {
+    const token = this.getToken();
+    if (!token) return null;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier']
+        ?? payload['sub']
+        ?? null;
+    } catch (_e) {
+      return null;
+    }
+  }
+
+  getCurrentUsername(): string | null {
+    const token = this.getToken();
+    if (!token) return null;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name']
+        ?? payload['unique_name']
+        ?? null;
+    } catch (_e) {
+      return null;
+    }
+  }
+
+  isAdmin(): boolean {
+    const token = this.getToken();
+    if (!token) return false;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const roles = payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+      if (Array.isArray(roles)) return roles.includes('Admin');
+      return roles === 'Admin';
+    } catch (_e) {
+      return false;
+    }
+  }
 }

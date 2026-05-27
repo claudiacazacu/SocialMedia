@@ -1,37 +1,36 @@
-#Social Media App - ASP.NET Web Core API + Frontend Angular
+# Social Media App - ASP.NET Web Core API + Frontend Angular
 
 Un proiect care simuleaza functionalitatile de baza ale unei aplicatii de socializare, precum Instagram. Acesta implementeaza o arhitectura pe straturi si include un sistem complet de atentificare - autorizare - gestionare a continutului.
 
-##Functionalitati
+## Functionalitati
 * **Atentificare si securitate:** Sistem de login si register securizat, folosind un JWT.
-  <img src="docs/screenshots/login.png" width="600"/>
-  <img src="docs/screenshots/register.png" width="600"/>
+  ![Login](docs/screenshots/login.png)
+  ![Register](docs/screenshots/register.png)
 * **Sistem de roluri:** Acces restrictionat in functie de rolul contului- useri normali, dar si un admin pentru moderarea continutului
-  <br/>
-  <img src="docs/screenshots/roluri.png" width="600"/>
+  ![Roluri](docs/screenshots/roluri.png)
 * **Operatii CRUD:** Pentru gestionarea postarilor/comentariilor/like urilor/ urmaritorilor
-  <img src="docs/screenshots/feed.png" width="600"/>
-  <img src="docs/screenshots/profil.png" width="600"/>
+  ![Feed](docs/screenshots/feed.png)
+  ![Profil](docs/screenshots/profil.png)
 * **Logging** Sistem de jurnal pentru erori si activitatile APiului
-  <img src="docs/screenshots/logging.png" width="600"/>
+  ![Logging](docs/screenshots/logging.png)
 
-##Tehnologii
+## Tehnologii
 * **Backend** C# ASP.NET Core Web API
 * **DB** PostgreSQL
 * **ORM** Entity Framework Core
 * **Arhitectura** N-tier (Controllers-Services-Repositories)
 * **Securitate** JWT, ASP.NET Core Identity
 
-##Structura 
+## Structura 
 
-###Principala
+### Principala
 * `/Controllers` - Expunerea endpoint-urilor
 * `/Services` - Logica de business si validari
 * `/Repositories` - Interogarile catre DB
 * `/DTOs` - DTOs pentru comunicarea client-server
 * `/Middlewares` - Componente care intercepteaza cererile clientului dar si raspunsurile serverului
 
-###Completa:
+### Completa:
 ```
 instagram/
 ├── backend/                          # ASP.NET Core Web API

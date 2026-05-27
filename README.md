@@ -4,15 +4,16 @@ Un proiect care simuleaza functionalitatile de baza ale unei aplicatii de social
 
 ##Functionalitati
 * **Atentificare si securitate:** Sistem de login si register securizat, folosind un JWT.
-  <img src="docs/screenshots/login.png" width="400"/>
-  <img src="docs/screenshots/register.png" width="400"/>
+  <img src="docs/screenshots/login.png" width="600"/>
+  <img src="docs/screenshots/register.png" width="600"/>
 * **Sistem de roluri:** Acces restrictionat in functie de rolul contului- useri normali, dar si un admin pentru moderarea continutului
-  <img src="docs/screenshots/roluri.png" width="400"/>
+  <br/>
+  <img src="docs/screenshots/roluri.png" width="600"/>
 * **Operatii CRUD:** Pentru gestionarea postarilor/comentariilor/like urilor/ urmaritorilor
-  <img src="docs/screenshots/feed.png" width="400"/>
-  <img src="docs/screenshots/profil.png" width="400"/>
+  <img src="docs/screenshots/feed.png" width="600"/>
+  <img src="docs/screenshots/profil.png" width="600"/>
 * **Logging** Sistem de jurnal pentru erori si activitatile APiului
-  <img src="docs/screenshots/logging.png" width="400"/>
+  <img src="docs/screenshots/logging.png" width="600"/>
 
 ##Tehnologii
 * **Backend** C# ASP.NET Core Web API

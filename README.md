@@ -3,7 +3,7 @@
 Un proiect care simuleaza functionalitatile de baza ale unei aplicatii de socializare, precum Instagram. Acesta implementeaza o arhitectura pe straturi si include un sistem complet de atentificare - autorizare - gestionare a continutului.
 
 ## Functionalitati
-* **Atentificare si securitate:** Sistem de login si register securizat, folosind un JWT.
+* **Autentificare si securitate:** Sistem de login si register securizat, folosind un JWT.
   <img src="docs/screenshots/login.png" width="500"/>
   <img src="docs/screenshots/register.png" width="400"/>
 * **Sistem de roluri:** Acces restrictionat in functie de rolul contului- useri normali, dar si un admin pentru moderarea continutului
